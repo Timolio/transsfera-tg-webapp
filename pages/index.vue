@@ -5,7 +5,7 @@ const { useWebApp, MainButton } = await import('vue-tg');
 
 const { sendData } = useWebApp();
 
-const currentStep = ref(2);
+const currentStep = ref(0);
 const totalSteps = ref(3);
 
 const formData = ref<FormData>({
