@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { FormData } from '~/types/types';
 
-const { useWebApp, MainButton } = await import('vue-tg');
+const { useWebApp, MainButton, BackButton } = await import('vue-tg');
 
 const { sendData } = useWebApp();
 
@@ -30,26 +30,58 @@ const canProceed = computed(() => {
 </script>
 
 <template>
-    <div class="min-h-screen p-5 bg-app-bg text-tg-text">
-        <div class="max-w-lg mx-auto">
-            <div class="mb-8">
-                <UProgress v-model="currentStep" :max="totalSteps" />
-            </div>
+    <div
+        class="min-h-screen p-5 bg-app-bg text-tg-text max-w-lg mx-auto flex flex-col"
+    >
+        <div class="mb-8">
+            <UProgress v-model="currentStep" :max="totalSteps" />
+        </div>
+
+        <div class="grow-1">
             <div v-if="currentStep === 0" class="space-y-6">
-                <div
-                    class="bg-tg-bg p-4 rounded-2xl border border-tg-secondary-bg"
-                >
-                    <UCalendar
-                        v-model="formData.date"
-                        size="xl"
-                        :year-controls="false"
-                    />
+                <div>
+                    <div
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-2"
+                    >
+                        Выберите дату
+                    </div>
+                    <div
+                        class="bg-tg-bg p-4 rounded-2xl border border-tg-secondary-bg"
+                    >
+                        <UCalendar
+                            v-model="formData.date"
+                            size="xl"
+                            :year-controls="false"
+                        />
+                    </div>
                 </div>
+
                 <div v-if="formData.date">
-                    <UInput size="xl" v-model="formData.time" type="time" />
+                    <div
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-2"
+                    >
+                        Выберите время
+                    </div>
+                    <UInput
+                        :ui="{
+                            base: 'rounded-2xl',
+                        }"
+                        size="xl"
+                        v-model="formData.time"
+                        type="time"
+                    />
                 </div>
             </div>
         </div>
+
+        <UButton
+            class="w-full justify-center text-xl font-medium rounded-2xl"
+            trailing-icon="i-lucide-arrow-right"
+            size="xl"
+            v-if="canProceed"
+            @click="confirm"
+        >
+            Далее
+        </UButton>
     </div>
-    <MainButton :visible="!!canProceed" text="Confirm" @click="confirm" />
 </template>
