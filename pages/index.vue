@@ -20,10 +20,10 @@ const confirm = () => {
     const dataToSend = {
         from: formData.value.from,
         to: formData.value.to,
-        date: formData.value.date?.toISOString().split('T')[0],
+        date: formData.value.date?.toString(),
         time: formData.value.time,
         passengers: formData.value.passengers,
-        timestamp: new Date().toISOString(),
+        timestamp: new Date().toString(),
     };
 
     sendData(JSON.stringify(dataToSend));
