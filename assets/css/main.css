@@ -21,7 +21,7 @@
 
     /* @nuxt/ui */
     --ui-primary: var(--color-app-primary);
-    --ui-bg: var(--color-app-bg);
+    --ui-bg: var(--color-app-bg-accented);
     --ui-bg-accented: var(--color-app-bg-accented);
     --ui-border-accented: var(--color-app-border-accented);
 }

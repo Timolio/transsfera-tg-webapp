@@ -46,7 +46,7 @@ const canProceed = computed(() => {
                         Выберите дату
                     </div>
                     <div
-                        class="bg-tg-bg p-4 rounded-2xl border border-tg-secondary-bg"
+                        class="bg-app-bg-accented p-4 rounded-2xl border border-app-border-accented"
                     >
                         <UCalendar
                             v-model="formData.date"
