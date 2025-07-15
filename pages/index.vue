@@ -63,7 +63,8 @@ const buttonText = computed(() => {
 
 <template>
     <div class="min-h-screen p-5 bg-app-bg max-w-lg mx-auto flex flex-col">
-        <div class="mb-6">
+        <div class="mb-8 flex gap-4 items-center sticky top-0">
+            <img class="h-10 w-10" src="/logo.png" />
             <UProgress status v-model="currentStep" :max="totalSteps" />
         </div>
 
@@ -167,6 +168,7 @@ const buttonText = computed(() => {
         :visible="!!canProceed"
         @click="nextStep"
         color="#e7c380"
+        :hasShineEffect="currentStep === totalSteps - 1"
     />
     <BackButton :visible="currentStep > 0" @click="prevStep" />
 </template>
