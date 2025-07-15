@@ -31,22 +31,22 @@
 
         <div
             v-if="isModalOpen"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/75 bg-opacity-50"
-            @click="confirmSelection"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 bg-opacity backdrop-blur-md p-5"
+            @click="closeModal"
         >
             <div
-                class="bg-app-bg-accented rounded-2xl shadow-xl w-full max-w-md mx-4 overflow-hidden"
+                class="bg-app-bg-accented border border-app-border-accented rounded-2xl shadow-xl w-full max-w-lg overflow-hidden"
                 @click.stop
             >
                 <div>
                     <div class="flex text-2xl font-medium">
                         <div class="flex-1">
                             <div class="h-96 overflow-y-auto" ref="hoursColumn">
-                                <div class="py-20">
+                                <div class="py-31">
                                     <div
                                         v-for="hour in hours"
                                         :key="hour"
-                                        @click="selectedHour = hour"
+                                        @click="selectHour(hour)"
                                         class="h-10 flex items-center justify-center cursor-pointer transition-colors"
                                         :class="
                                             selectedHour === hour
@@ -65,11 +65,11 @@
                                 class="h-96 overflow-y-auto"
                                 ref="minutesColumn"
                             >
-                                <div class="py-20">
+                                <div class="py-31">
                                     <div
                                         v-for="minute in minutes"
                                         :key="minute"
-                                        @click="selectedMinute = minute"
+                                        @click="selectMinute(minute)"
                                         class="h-10 flex items-center justify-center cursor-pointer transition-colors"
                                         :class="
                                             selectedMinute === minute
@@ -90,8 +90,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick, onMounted } from 'vue';
-
 interface Props {
     modelValue?: string;
 }
@@ -136,33 +134,45 @@ const openModal = () => {
 };
 
 const closeModal = () => {
+    updateSelectedTime();
     isModalOpen.value = false;
 };
 
-const confirmSelection = () => {
+const selectHour = (hour: number) => {
+    selectedHour.value = hour;
+    updateSelectedTime();
+};
+
+const selectMinute = (minute: number) => {
+    selectedMinute.value = minute;
+    updateSelectedTime();
+};
+
+const updateSelectedTime = () => {
     const timeString = currentTimeString.value;
     selectedTime.value = timeString;
     emit('update:modelValue', timeString);
     emit('change', timeString);
-    closeModal();
 };
 
 const scrollToSelected = () => {
     const itemHeight = 40;
     const containerHeight = 384;
+    const padding = 124;
+    const paddingOffset = padding - itemHeight / 2;
     const visibleItems = Math.floor(containerHeight / itemHeight);
     const centerOffset = Math.floor(visibleItems / 2);
 
     if (hoursColumn.value) {
         const hourIndex = hours.value.indexOf(selectedHour.value);
         const scrollTop = (hourIndex - centerOffset) * itemHeight;
-        hoursColumn.value.scrollTop = Math.max(0, scrollTop + 80);
+        hoursColumn.value.scrollTop = Math.max(0, scrollTop + paddingOffset);
     }
 
     if (minutesColumn.value) {
         const minuteIndex = minutes.value.indexOf(selectedMinute.value);
         const scrollTop = (minuteIndex - centerOffset) * itemHeight;
-        minutesColumn.value.scrollTop = Math.max(0, scrollTop + 80);
+        minutesColumn.value.scrollTop = Math.max(0, scrollTop + paddingOffset);
     }
 };
 
@@ -172,12 +182,6 @@ watch(
         selectedTime.value = newValue;
     }
 );
-
-watch([selectedHour, selectedMinute], () => {
-    nextTick(() => {
-        scrollToSelected();
-    });
-});
 
 onMounted(() => {
     if (!selectedTime.value) {
@@ -206,6 +210,6 @@ onMounted(() => {
 }
 
 .overflow-y-auto {
-    scroll-behavior: smooth;
+    scroll-behavior: auto;
 }
 </style>
