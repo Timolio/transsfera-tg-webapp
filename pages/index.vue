@@ -70,12 +70,12 @@ const buttonText = computed(() => {
         <div class="flex-1 flex flex-col">
             <div v-if="currentStep === 0" class="space-y-6 flex-1">
                 <div class="p-3 rounded-2xl border border-app-border-accented">
-                    <div class="flex items-center space-x-2 text-app-subtitle">
+                    <div class="flex items-center gap-2 text-app-subtitle">
                         <Icon
                             name="heroicons:information-circle"
-                            class="w-4 h-4 text-app-primary"
+                            class="w-5 h-5"
                         />
-                        <span class="text-sm">
+                        <span class="text-sm font-medium">
                             Дату и время указывайте по 🇪🇸 времени!
                         </span>
                     </div>
@@ -103,24 +103,7 @@ const buttonText = computed(() => {
                     >
                         Выберите время
                     </div>
-                    <div
-                        class="bg-app-bg-accented focus-within:ring-2 ring-app-primary rounded-2xl border border-app-border-accented px-3 py-2"
-                    >
-                        <input
-                            class="w-full outline-none"
-                            type="time"
-                            v-model="formData.time"
-                        />
-                    </div>
-                    <!-- <UInput
-                        class="w-full"
-                        :ui="{
-                            base: 'rounded-2xl',
-                        }"
-                        size="xl"
-                        v-model="formData.time"
-                        type="time"
-                    /> -->
+                    <TimePicker v-model="formData.time!" />
                 </div>
             </div>
 
@@ -172,6 +155,7 @@ const buttonText = computed(() => {
                         class="w-full"
                         type="number"
                         :ui="{ base: ['rounded-2xl'] }"
+                        v-model="formData.passengers"
                     />
                 </div>
             </div>
