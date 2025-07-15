@@ -30,13 +30,15 @@ const canProceed = computed(() => {
 </script>
 
 <template>
-    <div class="min-h-screen p-5 bg-tg-bg text-tg-text">
+    <div class="min-h-screen p-5 bg-app-bg text-tg-text">
         <div class="max-w-lg mx-auto">
             <div class="mb-8">
                 <UProgress v-model="currentStep" :max="totalSteps" />
             </div>
             <div v-if="currentStep === 0" class="space-y-6">
-                <div class="bg-tg-secondary-bg p-4 rounded-2xl">
+                <div
+                    class="bg-tg-bg p-4 rounded-2xl border border-tg-secondary-bg"
+                >
                     <UCalendar
                         v-model="formData.date"
                         size="xl"
@@ -44,7 +46,7 @@ const canProceed = computed(() => {
                     />
                 </div>
                 <div v-if="formData.date">
-                    <UInput v-model="formData.time" type="time" />
+                    <UInput size="xl" v-model="formData.time" type="time" />
                 </div>
             </div>
         </div>

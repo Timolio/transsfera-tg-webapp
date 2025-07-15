@@ -21,7 +21,9 @@
 
     /* @nuxt/ui */
     --ui-primary: var(--tg-theme-accent-text-color);
-    --ui-bg-accented: var(--tg-theme-secondary-bg-color);
+    --ui-bg: var(--tg-theme-bg-color);
+    --ui-bg-accented: var(--tg-theme-bg-color);
+    --ui-border-accented: var(--tg-theme-secondary-bg-color);
 }
 
 @theme {
@@ -39,4 +41,5 @@
     --color-tg-section-header-text: var(--tg-theme-section-header-text-color);
     --color-tg-section-separator: var(--tg-theme-section-separator-color);
     --color-tg-subtitle-text: var(--tg-theme-subtitle-text-color);
+    --color-app-bg: var(--app-bg-color);
 }
