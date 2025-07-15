@@ -5,7 +5,7 @@ const { useWebApp, MainButton } = await import('vue-tg');
 
 const { sendData } = useWebApp();
 
-const currentStep = ref(0);
+const currentStep = ref(2);
 const totalSteps = ref(3);
 
 const formData = ref<FormData>({
@@ -49,5 +49,5 @@ const canProceed = computed(() => {
             </div>
         </div>
     </div>
-    <MainButton v-show="canProceed" text="Confirm" @click="confirm" />
+    <MainButton :visible="!!canProceed" text="Confirm" @click="confirm" />
 </template>

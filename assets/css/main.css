@@ -21,6 +21,7 @@
 
     /* @nuxt/ui */
     --ui-primary: var(--tg-theme-accent-text-color);
+    --ui-bg-accented: var(--tg-theme-secondary-bg-color);
 }
 
 @theme {
