@@ -1,5 +1,7 @@
+import type { DateValue } from '@internationalized/date';
+
 export interface FormData {
-    date: Date | null;
+    date: DateValue | null;
     time: string | null;
     passengers: number;
     from: string;

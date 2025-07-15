@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { FormData } from '~/types/types';
+import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
 
 const { useWebApp, MainButton, BackButton } = await import('vue-tg');
 
@@ -43,7 +44,7 @@ const canProceed = computed(() => {
 });
 
 const nextStep = () => {
-    if (currentStep.value < totalSteps.value - 1) {
+    if (currentStep.value < totalSteps.value) {
         currentStep.value++;
     } else {
         confirm();
@@ -56,8 +57,10 @@ const prevStep = () => {
     }
 };
 
+const minDate = today(getLocalTimeZone());
+
 const buttonText = computed(() => {
-    return currentStep.value === totalSteps.value - 1 ? 'Готово' : 'Далее';
+    return currentStep.value === totalSteps.value ? 'Готово' : 'Далее';
 });
 </script>
 
@@ -94,6 +97,7 @@ const buttonText = computed(() => {
                             v-model="formData.date"
                             size="xl"
                             :year-controls="false"
+                            :min-value="minDate"
                         />
                     </div>
                 </div>
@@ -160,6 +164,32 @@ const buttonText = computed(() => {
                     />
                 </div>
             </div>
+
+            <div v-if="currentStep === 3" class="space-y-6 flex-1">
+                <div class="p-3 rounded-2xl border border-app-border-accented">
+                    <div class="flex items-center gap-2 text-app-subtitle">
+                        <Icon
+                            name="heroicons:information-circle"
+                            class="w-5 h-5"
+                        />
+                        <span class="text-sm font-medium">
+                            Проверьте введенные данные перед отправкой!
+                        </span>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <div>
+                        <strong>Дата:</strong> {{ formData.date?.toString() }}
+                    </div>
+                    <div><strong>Время:</strong> {{ formData.time }}</div>
+                    <div><strong>Откуда:</strong> {{ formData.from }}</div>
+                    <div><strong>Куда:</strong> {{ formData.to }}</div>
+                    <div>
+                        <strong>Пассажиров:</strong> {{ formData.passengers }}
+                    </div>
+                </div>
+            </div>
+            <button @click="nextStep">next</button>
         </div>
     </div>
 
