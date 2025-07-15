@@ -97,13 +97,22 @@ const buttonText = computed(() => {
                     </div>
                 </div>
 
-                <div v-if="formData.date">
+                <div v-if="formData.date" class="flex items-center gap-3">
                     <div
                         class="uppercase font-medium text-app-subtitle ml-2 mb-1"
                     >
                         Выберите время
                     </div>
-                    <UInput
+                    <div
+                        class="bg-app-bg-accented focus-within:ring-2 ring-app-primary rounded-2xl border border-app-border-accented px-3 py-2"
+                    >
+                        <input
+                            class="w-full outline-none"
+                            type="time"
+                            v-model="formData.time"
+                        />
+                    </div>
+                    <!-- <UInput
                         class="w-full"
                         :ui="{
                             base: 'rounded-2xl',
@@ -111,14 +120,14 @@ const buttonText = computed(() => {
                         size="xl"
                         v-model="formData.time"
                         type="time"
-                    />
+                    /> -->
                 </div>
             </div>
 
             <div v-if="currentStep === 1" class="space-y-6 flex-1">
                 <div>
                     <div
-                        class="uppercase font-medium text-app-subtitle ml-2 mb-1"
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-2"
                     >
                         Откуда
                     </div>
@@ -135,7 +144,7 @@ const buttonText = computed(() => {
 
                 <div>
                     <div
-                        class="uppercase font-medium text-app-subtitle ml-2 mb-1"
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-2"
                     >
                         Куда
                     </div>
@@ -154,7 +163,7 @@ const buttonText = computed(() => {
             <div v-if="currentStep === 2" class="space-y-6 flex-1">
                 <div>
                     <div
-                        class="uppercase font-medium text-app-subtitle ml-2 mb-1"
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-2"
                     >
                         Количество пассажиров
                     </div>
