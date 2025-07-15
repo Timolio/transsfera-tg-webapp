@@ -168,7 +168,6 @@ const buttonText = computed(() => {
         :visible="!!canProceed"
         @click="nextStep"
         color="#e7c380"
-        :hasShineEffect="currentStep === totalSteps - 1"
     />
     <BackButton :visible="currentStep > 0" @click="prevStep" />
 </template>

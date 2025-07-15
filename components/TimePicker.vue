@@ -188,6 +188,7 @@ onMounted(() => {
         const now = new Date();
         selectedHour.value = now.getHours();
         selectedMinute.value = now.getMinutes();
+        updateSelectedTime();
     }
 });
 </script>

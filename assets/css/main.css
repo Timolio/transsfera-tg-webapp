@@ -49,3 +49,12 @@
     --color-app-primary: #e7c380;
     --color-app-subtitle: #708499;
 }
+
+*::-webkit-scrollbar {
+    display: none;
+}
+
+* {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
