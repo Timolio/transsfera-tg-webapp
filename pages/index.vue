@@ -6,7 +6,7 @@ const { useWebApp, MainButton, BackButton } = await import('vue-tg');
 const { sendData } = useWebApp();
 
 const currentStep = ref(0);
-const totalSteps = ref(2);
+const totalSteps = ref(3);
 
 const formData = ref<FormData>({
     date: null,
@@ -82,7 +82,7 @@ const buttonText = computed(() => {
                 </div>
                 <div>
                     <div
-                        class="uppercase font-medium text-app-subtitle ml-2 mb-3"
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-1"
                     >
                         Выберите дату
                     </div>
@@ -99,7 +99,7 @@ const buttonText = computed(() => {
 
                 <div v-if="formData.date">
                     <div
-                        class="uppercase font-medium text-app-subtitle ml-2 mb-3"
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-1"
                     >
                         Выберите время
                     </div>
