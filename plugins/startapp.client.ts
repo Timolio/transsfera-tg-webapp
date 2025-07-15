@@ -12,4 +12,9 @@ export default defineNuxtPlugin(async () => {
 
     setHeaderColor(style.getPropertyValue('--color-app-bg'));
     setBackgroundColor(style.getPropertyValue('--color-app-bg'));
+
+    // root.style.setProperty(
+    //     '--test-color',
+    //     adjust(style.getPropertyValue('--tg-theme-bg-color') || '', -13)
+    // );
 });

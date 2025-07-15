@@ -42,7 +42,8 @@
     --color-tg-section-separator: var(--tg-theme-section-separator-color);
     --color-tg-subtitle-text: var(--tg-theme-subtitle-text-color);
 
-    --color-app-bg: #0d1721;
+    /* --color-app-bg: #0d1721; */
+    --color-app-bg: #0a141e;
     --color-app-bg-accented: #17212b;
     --color-app-border-accented: #232e3c;
     --color-app-primary: #e7c380;

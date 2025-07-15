@@ -6,42 +6,83 @@ const { useWebApp, MainButton, BackButton } = await import('vue-tg');
 const { sendData } = useWebApp();
 
 const currentStep = ref(0);
-const totalSteps = ref(3);
+const totalSteps = ref(2);
 
 const formData = ref<FormData>({
     date: null,
     time: null,
+    passengers: 1,
+    from: '',
+    to: '',
 });
 
 const confirm = () => {
-    if (canProceed.value)
-        sendData(formData.value.date?.toString() + ', ' + formData.value.time);
-    else sendData('No date selected');
+    const dataToSend = {
+        from: formData.value.from,
+        to: formData.value.to,
+        date: formData.value.date?.toISOString().split('T')[0],
+        time: formData.value.time,
+        passengers: formData.value.passengers,
+        timestamp: new Date().toISOString(),
+    };
+
+    sendData(JSON.stringify(dataToSend));
 };
 
 const canProceed = computed(() => {
     switch (currentStep.value) {
         case 0:
             return formData.value.date && formData.value.time;
+        case 1:
+            return formData.value.from.trim() && formData.value.to.trim();
+        case 2:
+            return formData.value.passengers > 0;
         default:
             return true;
     }
 });
+
+const nextStep = () => {
+    if (currentStep.value < totalSteps.value - 1) {
+        currentStep.value++;
+    } else {
+        confirm();
+    }
+};
+
+const prevStep = () => {
+    if (currentStep.value > 0) {
+        currentStep.value--;
+    }
+};
+
+const buttonText = computed(() => {
+    return currentStep.value === totalSteps.value - 1 ? 'Готово' : 'Далее';
+});
 </script>
 
 <template>
-    <div
-        class="min-h-screen p-5 bg-app-bg text-tg-text max-w-lg mx-auto flex flex-col"
-    >
-        <div class="mb-8">
-            <UProgress v-model="currentStep" :max="totalSteps" />
+    <div class="min-h-screen p-5 bg-app-bg max-w-lg mx-auto flex flex-col">
+        <div class="mb-6">
+            <UProgress status v-model="currentStep" :max="totalSteps" />
         </div>
 
-        <div class="grow-1">
-            <div v-if="currentStep === 0" class="space-y-6">
+        <div class="flex-1 flex flex-col">
+            <div v-if="currentStep === 0" class="space-y-6 flex-1">
+                <div class="p-3 rounded-2xl border border-app-border-accented">
+                    <div class="flex items-center space-x-2 text-app-subtitle">
+                        <Icon
+                            name="heroicons:information-circle"
+                            class="w-4 h-4 text-app-primary"
+                        />
+                        <span class="text-sm">
+                            Дату и время указывайте по 🇪🇸 времени!
+                        </span>
+                    </div>
+                </div>
                 <div>
                     <div
-                        class="uppercase font-medium text-app-subtitle ml-2 mb-2"
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-3"
                     >
                         Выберите дату
                     </div>
@@ -58,11 +99,12 @@ const canProceed = computed(() => {
 
                 <div v-if="formData.date">
                     <div
-                        class="uppercase font-medium text-app-subtitle ml-2 mb-2"
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-3"
                     >
                         Выберите время
                     </div>
                     <UInput
+                        class="w-full"
                         :ui="{
                             base: 'rounded-2xl',
                         }"
@@ -72,16 +114,66 @@ const canProceed = computed(() => {
                     />
                 </div>
             </div>
-        </div>
 
-        <UButton
-            class="w-full justify-center text-xl font-medium rounded-2xl"
-            trailing-icon="i-lucide-arrow-right"
-            size="xl"
-            v-if="canProceed"
-            @click="confirm"
-        >
-            Далее
-        </UButton>
+            <div v-if="currentStep === 1" class="space-y-6 flex-1">
+                <div>
+                    <div
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-1"
+                    >
+                        Откуда
+                    </div>
+                    <UInput
+                        class="w-full"
+                        v-model="formData.from"
+                        placeholder="Введите адрес отправления"
+                        size="xl"
+                        :ui="{
+                            base: 'rounded-2xl',
+                        }"
+                    />
+                </div>
+
+                <div>
+                    <div
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-1"
+                    >
+                        Куда
+                    </div>
+                    <UInput
+                        class="w-full"
+                        v-model="formData.to"
+                        placeholder="Введите адрес назначения"
+                        size="xl"
+                        :ui="{
+                            base: 'rounded-2xl',
+                        }"
+                    />
+                </div>
+            </div>
+
+            <div v-if="currentStep === 2" class="space-y-6 flex-1">
+                <div>
+                    <div
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-1"
+                    >
+                        Количество пассажиров
+                    </div>
+                    <UInputNumber
+                        size="xl"
+                        class="w-full"
+                        type="number"
+                        :ui="{ base: ['rounded-2xl'] }"
+                    />
+                </div>
+            </div>
+        </div>
     </div>
+
+    <MainButton
+        :text="buttonText"
+        :visible="!!canProceed"
+        @click="nextStep"
+        color="#e7c380"
+    />
+    <BackButton :visible="currentStep > 0" @click="prevStep" />
 </template>
