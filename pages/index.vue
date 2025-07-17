@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { FormData } from '~/types/types';
 import { today, getLocalTimeZone } from '@internationalized/date';
-import * as v from 'valibot';
 
 const { useWebApp, MainButton, BackButton, useWebAppHapticFeedback } =
     await import('vue-tg');
@@ -12,7 +11,8 @@ const { notificationOccurred } = useWebAppHapticFeedback();
 const currentStep = ref(0);
 const totalSteps = ref(4);
 
-const isModalOpen = ref(false);
+const isTimeModalOpen = ref(false);
+const isLocationModalOpen = ref(false);
 const showValidationErrors = ref(false);
 
 const state = reactive<FormData>({
@@ -20,8 +20,8 @@ const state = reactive<FormData>({
     time: null,
     passengersUnder12: 0,
     passengersOver12: 0,
-    from: '',
-    to: '',
+    from: null,
+    to: null,
     name: '',
     phone: '',
 });
@@ -46,7 +46,7 @@ const validateCurrentStep = () => {
         case 0:
             return state.date && state.time;
         case 1:
-            return state.from.trim() && state.to.trim();
+            return state.to !== null && state.from !== null;
         case 2:
             return state.passengersUnder12 + state.passengersOver12 > 0;
         case 3:
@@ -80,20 +80,12 @@ const prevStep = () => {
 const minDate = today(getLocalTimeZone());
 
 const shouldShowMainButton = computed(() => {
-    return !isModalOpen.value;
+    return !isTimeModalOpen.value && !isLocationModalOpen.value;
 });
 
 const buttonText = computed(() => {
     return currentStep.value === totalSteps.value ? 'Готово' : 'Далее';
 });
-
-const handleTimePickerClose = () => {
-    isModalOpen.value = false;
-};
-
-const handleTimePickerOpen = () => {
-    isModalOpen.value = true;
-};
 </script>
 
 <template>
@@ -144,8 +136,8 @@ const handleTimePickerOpen = () => {
                         </span>
                     </div>
                     <TimePicker
-                        @open="handleTimePickerOpen"
-                        @close="handleTimePickerClose"
+                        @open="isTimeModalOpen = true"
+                        @close="isTimeModalOpen = false"
                         v-model="state.time!"
                     />
                 </div>
@@ -158,13 +150,13 @@ const handleTimePickerOpen = () => {
                     >
                         Откуда
                         <span
-                            v-if="showValidationErrors && !state.from"
+                            v-if="showValidationErrors && state.from === null"
                             class="text-red-500"
                         >
                             *
                         </span>
                     </div>
-                    <UInput
+                    <!-- <UInput
                         class="w-full"
                         v-model="state.from"
                         placeholder="Введите пункт отправления"
@@ -172,6 +164,11 @@ const handleTimePickerOpen = () => {
                         :ui="{
                             base: 'rounded-2xl',
                         }"
+                    /> -->
+                    <LocationPicker
+                        @open="isLocationModalOpen = true"
+                        @close="isLocationModalOpen = false"
+                        v-model="state.from"
                     />
                 </div>
 
@@ -181,13 +178,13 @@ const handleTimePickerOpen = () => {
                     >
                         Куда
                         <span
-                            v-if="showValidationErrors && !state.to"
+                            v-if="showValidationErrors && state.to === null"
                             class="text-red-500"
                         >
                             *
                         </span>
                     </div>
-                    <UInput
+                    <!-- <UInput
                         class="w-full"
                         v-model="state.to"
                         placeholder="Введите пункт назначения"
@@ -195,6 +192,11 @@ const handleTimePickerOpen = () => {
                         :ui="{
                             base: 'rounded-2xl',
                         }"
+                    /> -->
+                    <LocationPicker
+                        @open="isLocationModalOpen = true"
+                        @close="isLocationModalOpen = false"
+                        v-model="state.to"
                     />
                 </div>
             </div>
@@ -327,9 +329,9 @@ const handleTimePickerOpen = () => {
                 </div>
             </div>
 
-            <button @click="nextStep" v-if="shouldShowMainButton">
+            <!-- <button @click="nextStep" v-if="shouldShowMainButton">
                 {{ buttonText }}
-            </button>
+            </button> -->
         </div>
     </div>
 
