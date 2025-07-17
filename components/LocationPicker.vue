@@ -1,6 +1,5 @@
 <template>
     <div>
-        <!-- Кнопка для открытия карты -->
         <div
             @click="openMap"
             class="w-full px-3 py-2 rounded-2xl bg-app-bg-accented cursor-pointer flex items-center justify-between border border-app-border-accented"
@@ -44,76 +43,37 @@
             </svg>
         </div>
 
-        <!-- Модальное окно с картой -->
         <div
             v-if="isMapOpen"
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-md p-4"
             @click="closeMap"
         >
             <div
-                class="bg-app-bg-accented border border-app-border-accented rounded-2xl shadow-xl w-full max-w-4xl h-[80vh] overflow-hidden flex flex-col"
+                class="bg-app-bg border border-app-border-accented rounded-2xl shadow-xl w-full max-w-4xl h-[80vh] overflow-hidden flex flex-col"
                 @click.stop
             >
-                <!-- Заголовок -->
-                <div
-                    class="p-4 border-b border-app-border-accented flex items-center justify-between"
-                >
-                    <h3 class="text-lg font-semibold">{{ title }}</h3>
-                    <button
-                        @click="closeMap"
-                        class="p-2 hover:bg-app-bg rounded-lg transition-colors"
-                    >
-                        <svg
-                            class="w-5 h-5"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12"
-                            />
-                        </svg>
-                    </button>
-                </div>
-
-                <!-- Поиск -->
                 <div class="p-4 border-b border-app-border-accented">
-                    <div class="relative">
-                        <input
-                            v-model="searchQuery"
-                            @input="handleSearch"
-                            type="text"
-                            placeholder="Поиск по адресу..."
-                            class="w-full px-4 py-2 rounded-xl bg-app-bg border border-app-border-accented focus:outline-none focus:ring-2 focus:ring-blue-500"
-                        />
-                        <svg
-                            class="absolute right-3 top-2.5 w-5 h-5 text-app-subtitle"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                        >
-                            <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                            />
-                        </svg>
-                    </div>
+                    <UInput
+                        size="xl"
+                        v-model="searchQuery"
+                        @input="handleSearch"
+                        placeholder="Поиск..."
+                        class="w-full"
+                        :ui="{
+                            base: 'rounded-2xl',
+                        }"
+                        icon="i-lucide-search"
+                    />
 
-                    <!-- Результаты поиска -->
                     <div
                         v-if="searchResults.length > 0"
-                        class="mt-2 bg-app-bg rounded-xl border border-app-border-accented max-h-40 overflow-y-auto"
+                        class="mt-2 bg-app-bg-accented rounded-xl border border-app-border-accented max-h-40 overflow-y-auto"
                     >
                         <div
                             v-for="result in searchResults"
                             :key="result.place_id"
                             @click="selectSearchResult(result)"
-                            class="p-3 hover:bg-app-bg-accented cursor-pointer border-b border-app-border-accented last:border-b-0"
+                            class="p-3 cursor-pointer border-b border-app-border-accented last:border-b-0"
                         >
                             <div class="font-medium text-sm">
                                 {{ result.display_name }}
@@ -204,7 +164,7 @@ const initMap = async () => {
 
     await loadLeaflet();
 
-    map = L.map(mapContainer.value).setView([55.7558, 37.6176], 10);
+    map = L.map(mapContainer.value).setView([38.3452, -0.481], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '© OpenStreetMap contributors',
