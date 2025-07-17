@@ -15,7 +15,7 @@
                     <polyline points="12,6 12,12 16,14"></polyline>
                 </svg>
                 <span>
-                    {{ selectedTime || '--:--' }}
+                    {{ selectedTime || '' }}
                 </span>
             </div>
             <svg
@@ -42,7 +42,7 @@
                     <div class="flex text-2xl font-medium">
                         <div class="flex-1">
                             <div class="h-96 overflow-y-auto" ref="hoursColumn">
-                                <div class="py-31">
+                                <div class="py-8">
                                     <div
                                         v-for="hour in hours"
                                         :key="hour"
@@ -65,7 +65,7 @@
                                 class="h-96 overflow-y-auto"
                                 ref="minutesColumn"
                             >
-                                <div class="py-31">
+                                <div class="py-8">
                                     <div
                                         v-for="minute in minutes"
                                         :key="minute"
@@ -101,6 +101,8 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
     'update:modelValue': [value: string];
     change: [value: string];
+    close: [];
+    open: [];
 }>();
 
 const isModalOpen = ref(false);
@@ -123,6 +125,7 @@ const currentTimeString = computed(() => {
 
 const openModal = () => {
     isModalOpen.value = true;
+    emit('open');
     if (selectedTime.value) {
         const [hours, minutes] = selectedTime.value.split(':').map(Number);
         selectedHour.value = hours;
@@ -136,6 +139,7 @@ const openModal = () => {
 const closeModal = () => {
     updateSelectedTime();
     isModalOpen.value = false;
+    emit('close');
 };
 
 const selectHour = (hour: number) => {
@@ -158,7 +162,7 @@ const updateSelectedTime = () => {
 const scrollToSelected = () => {
     const itemHeight = 40;
     const containerHeight = 384;
-    const padding = 124;
+    const padding = 32;
     const paddingOffset = padding - itemHeight / 2;
     const visibleItems = Math.floor(containerHeight / itemHeight);
     const centerOffset = Math.floor(visibleItems / 2);
@@ -188,7 +192,6 @@ onMounted(() => {
         const now = new Date();
         selectedHour.value = now.getHours();
         selectedMinute.value = now.getMinutes();
-        updateSelectedTime();
     }
 });
 </script>

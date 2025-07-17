@@ -1,100 +1,129 @@
 <script setup lang="ts">
 import type { FormData } from '~/types/types';
-import { CalendarDate, today, getLocalTimeZone } from '@internationalized/date';
+import { today, getLocalTimeZone } from '@internationalized/date';
+import * as v from 'valibot';
 
-const { useWebApp, MainButton, BackButton } = await import('vue-tg');
+const { useWebApp, MainButton, BackButton, useWebAppHapticFeedback } =
+    await import('vue-tg');
 
 const { sendData } = useWebApp();
+const { notificationOccurred } = useWebAppHapticFeedback();
 
 const currentStep = ref(0);
-const totalSteps = ref(3);
+const totalSteps = ref(4);
 
-const formData = ref<FormData>({
+const isModalOpen = ref(false);
+const showValidationErrors = ref(false);
+
+const state = reactive<FormData>({
     date: null,
     time: null,
-    passengers: 1,
+    passengersUnder12: 0,
+    passengersOver12: 0,
     from: '',
     to: '',
+    name: '',
+    phone: '',
 });
 
 const confirm = () => {
     const dataToSend = {
-        from: formData.value.from,
-        to: formData.value.to,
-        date: formData.value.date?.toString(),
-        time: formData.value.time,
-        passengers: formData.value.passengers,
-        timestamp: new Date().toString(),
+        from: state.from,
+        to: state.to,
+        date: state.date?.toString(),
+        time: state.time,
+        passengersUnder12: state.passengersUnder12,
+        passengersOver12: state.passengersOver12,
+        name: state.name,
+        phone: state.phone,
     };
 
     sendData(JSON.stringify(dataToSend));
 };
 
-const canProceed = computed(() => {
+const validateCurrentStep = () => {
     switch (currentStep.value) {
         case 0:
-            return formData.value.date && formData.value.time;
+            return state.date && state.time;
         case 1:
-            return formData.value.from.trim() && formData.value.to.trim();
+            return state.from.trim() && state.to.trim();
         case 2:
-            return formData.value.passengers > 0;
+            return state.passengersUnder12 + state.passengersOver12 > 0;
+        case 3:
+            return state.name.trim() && state.phone.trim();
         default:
             return true;
     }
-});
+};
 
 const nextStep = () => {
-    if (currentStep.value < totalSteps.value) {
-        currentStep.value++;
+    if (validateCurrentStep()) {
+        showValidationErrors.value = false;
+        if (currentStep.value < totalSteps.value) {
+            currentStep.value++;
+        } else {
+            confirm();
+        }
     } else {
-        confirm();
+        notificationOccurred('error');
+        showValidationErrors.value = true;
     }
 };
 
 const prevStep = () => {
     if (currentStep.value > 0) {
         currentStep.value--;
+        showValidationErrors.value = false;
     }
 };
 
 const minDate = today(getLocalTimeZone());
 
+const shouldShowMainButton = computed(() => {
+    return !isModalOpen.value;
+});
+
 const buttonText = computed(() => {
     return currentStep.value === totalSteps.value ? 'Готово' : 'Далее';
 });
+
+const handleTimePickerClose = () => {
+    isModalOpen.value = false;
+};
+
+const handleTimePickerOpen = () => {
+    isModalOpen.value = true;
+};
 </script>
 
 <template>
-    <div class="min-h-screen p-5 bg-app-bg max-w-lg mx-auto flex flex-col">
+    <div
+        class="relative min-h-screen p-5 bg-app-bg max-w-lg mx-auto flex flex-col"
+    >
         <div class="mb-8 flex gap-4 items-center sticky top-0">
-            <img class="h-10 w-10" src="/logo.png" />
-            <UProgress status v-model="currentStep" :max="totalSteps" />
+            <!-- <img class="h-8 w-8" src="/logo.png" /> -->
+            <UProgress v-model="currentStep" :max="totalSteps" />
         </div>
 
         <div class="flex-1 flex flex-col">
             <div v-if="currentStep === 0" class="space-y-6 flex-1">
-                <!-- <div class="p-3 rounded-2xl border border-app-border-accented">
-                    <div class="flex items-center gap-2 text-app-subtitle">
-                        <Icon
-                            name="heroicons:information-circle"
-                            class="w-5 h-5"
-                        />
-                        <span class="text-sm font-medium">
-                            Дату и время указывайте по 🇪🇸 времени!
-                        </span>
-                    </div>
-                </div> -->
                 <div>
                     <div
                         class="uppercase font-medium text-app-subtitle ml-2 mb-1"
                     >
                         Выберите дату
+                        <span
+                            v-if="showValidationErrors && !state.date"
+                            class="text-red-500"
+                        >
+                            *
+                        </span>
                     </div>
                     <div
                         class="bg-app-bg-accented p-4 rounded-2xl border border-app-border-accented"
                     >
                         <UCalendar
-                            v-model="formData.date"
+                            v-model="state.date"
                             size="xl"
                             :year-controls="false"
                             :min-value="minDate"
@@ -102,13 +131,23 @@ const buttonText = computed(() => {
                     </div>
                 </div>
 
-                <div v-if="formData.date" class="flex items-center gap-2">
+                <div class="flex items-center gap-2">
                     <div
                         class="uppercase font-medium text-app-subtitle ml-2 mb-1"
                     >
                         Выберите время
+                        <span
+                            v-if="showValidationErrors && !state.time"
+                            class="text-red-500"
+                        >
+                            *
+                        </span>
                     </div>
-                    <TimePicker v-model="formData.time!" />
+                    <TimePicker
+                        @open="handleTimePickerOpen"
+                        @close="handleTimePickerClose"
+                        v-model="state.time!"
+                    />
                 </div>
             </div>
 
@@ -118,11 +157,17 @@ const buttonText = computed(() => {
                         class="uppercase font-medium text-app-subtitle ml-2 mb-1"
                     >
                         Откуда
+                        <span
+                            v-if="showValidationErrors && !state.from"
+                            class="text-red-500"
+                        >
+                            *
+                        </span>
                     </div>
                     <UInput
                         class="w-full"
-                        v-model="formData.from"
-                        placeholder="Введите адрес отправления"
+                        v-model="state.from"
+                        placeholder="Введите пункт отправления"
                         size="xl"
                         :ui="{
                             base: 'rounded-2xl',
@@ -135,11 +180,17 @@ const buttonText = computed(() => {
                         class="uppercase font-medium text-app-subtitle ml-2 mb-1"
                     >
                         Куда
+                        <span
+                            v-if="showValidationErrors && !state.to"
+                            class="text-red-500"
+                        >
+                            *
+                        </span>
                     </div>
                     <UInput
                         class="w-full"
-                        v-model="formData.to"
-                        placeholder="Введите адрес назначения"
+                        v-model="state.to"
+                        placeholder="Введите пункт назначения"
                         size="xl"
                         :ui="{
                             base: 'rounded-2xl',
@@ -149,23 +200,102 @@ const buttonText = computed(() => {
             </div>
 
             <div v-if="currentStep === 2" class="space-y-6 flex-1">
+                <div
+                    class="uppercase font-medium text-app-subtitle ml-2 flex items-center gap-1"
+                >
+                    Количество пассажиров
+                    <span
+                        v-if="
+                            showValidationErrors &&
+                            state.passengersUnder12 + state.passengersOver12 ===
+                                0
+                        "
+                        class="text-red-500"
+                        >*</span
+                    >
+                </div>
+                <div>
+                    <div>
+                        <div
+                            class="text-sm text-app-subtitle font-medium ml-2 mb-1"
+                        >
+                            До 12 лет
+                        </div>
+                        <UInputNumber
+                            size="xl"
+                            class="w-full"
+                            type="number"
+                            :ui="{ base: ['rounded-2xl'] }"
+                            v-model="state.passengersUnder12"
+                            :min="0"
+                        />
+                    </div>
+                </div>
                 <div>
                     <div
-                        class="uppercase font-medium text-app-subtitle ml-2 mb-1"
+                        class="text-sm text-app-subtitle font-medium ml-2 mb-1"
                     >
-                        Количество пассажиров
+                        От 12 лет
                     </div>
                     <UInputNumber
                         size="xl"
                         class="w-full"
                         type="number"
                         :ui="{ base: ['rounded-2xl'] }"
-                        v-model="formData.passengers"
+                        v-model="state.passengersOver12"
+                        :min="0"
                     />
                 </div>
             </div>
 
             <div v-if="currentStep === 3" class="space-y-6 flex-1">
+                <div>
+                    <div
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-1 flex items-center gap-1"
+                    >
+                        Имя
+                        <span
+                            v-if="showValidationErrors && !state.name.trim()"
+                            class="text-red-500"
+                            >*</span
+                        >
+                    </div>
+                    <UInput
+                        class="w-full"
+                        v-model="state.name"
+                        placeholder="Введите ваше имя"
+                        size="xl"
+                        :ui="{
+                            base: 'rounded-2xl',
+                        }"
+                    />
+                </div>
+
+                <div>
+                    <div
+                        class="uppercase font-medium text-app-subtitle ml-2 mb-1 flex items-center gap-1"
+                    >
+                        Телефон
+                        <span
+                            v-if="showValidationErrors && !state.phone.trim()"
+                            class="text-red-500"
+                            >*</span
+                        >
+                    </div>
+                    <UInput
+                        class="w-full"
+                        v-model="state.phone"
+                        placeholder="Введите номер телефона"
+                        size="xl"
+                        type="tel"
+                        :ui="{
+                            base: 'rounded-2xl',
+                        }"
+                    />
+                </div>
+            </div>
+
+            <div v-if="currentStep === 4" class="space-y-6 flex-1">
                 <div class="p-3 rounded-2xl border border-app-border-accented">
                     <div class="flex items-center gap-2 text-app-subtitle">
                         <Icon
@@ -179,23 +309,33 @@ const buttonText = computed(() => {
                 </div>
                 <div class="space-y-2">
                     <div>
-                        <strong>Дата:</strong> {{ formData.date?.toString() }}
+                        <strong>Дата:</strong> {{ state.date?.toString() }}
                     </div>
-                    <div><strong>Время:</strong> {{ formData.time }}</div>
-                    <div><strong>Откуда:</strong> {{ formData.from }}</div>
-                    <div><strong>Куда:</strong> {{ formData.to }}</div>
+                    <div><strong>Время:</strong> {{ state.time }}</div>
+                    <div><strong>Откуда:</strong> {{ state.from }}</div>
+                    <div><strong>Куда:</strong> {{ state.to }}</div>
                     <div>
-                        <strong>Пассажиров:</strong> {{ formData.passengers }}
+                        <strong>Пассажиров до 12 лет:</strong>
+                        {{ state.passengersUnder12 }}
                     </div>
+                    <div>
+                        <strong>Пассажиров от 12 лет:</strong>
+                        {{ state.passengersOver12 }}
+                    </div>
+                    <div><strong>Имя:</strong> {{ state.name }}</div>
+                    <div><strong>Телефон:</strong> {{ state.phone }}</div>
                 </div>
             </div>
-            <button @click="nextStep">next</button>
+
+            <button @click="nextStep" v-if="shouldShowMainButton">
+                {{ buttonText }}
+            </button>
         </div>
     </div>
 
     <MainButton
         :text="buttonText"
-        :visible="!!canProceed"
+        :visible="shouldShowMainButton"
         @click="nextStep"
         color="#e7c380"
     />
