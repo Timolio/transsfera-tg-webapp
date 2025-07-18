@@ -118,7 +118,7 @@ const handleSearch = async () => {
             const response = await fetch(
                 `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(
                     searchQuery.value
-                )}&limit=5&addressdetails=1`
+                )}&limit=5&addressdetails=1&accept-language=ru`
             );
             const data = await response.json();
             searchResults.value = data;

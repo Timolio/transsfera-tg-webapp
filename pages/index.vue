@@ -67,7 +67,7 @@ const validateCurrentStep = () => {
 };
 
 const nextStep = () => {
-    if (true) {
+    if (validateCurrentStep()) {
         showValidationErrors.value = false;
         if (currentStep.value < totalSteps.value) {
             currentStep.value++;
@@ -396,9 +396,9 @@ const buttonText = computed(() => {
                 </div>
             </div>
 
-            <button @click="nextStep" v-if="shouldShowMainButton">
+            <!-- <button @click="nextStep" v-if="shouldShowMainButton">
                 {{ buttonText }}
-            </button>
+            </button> -->
         </div>
     </div>
 
