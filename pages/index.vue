@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { FormData } from '~/types/types';
 import { today, getLocalTimeZone } from '@internationalized/date';
+import { isValidPhoneNumber } from 'libphonenumber-js';
 
 const { useWebApp, MainButton, BackButton, useWebAppHapticFeedback } =
     await import('vue-tg');
@@ -26,6 +27,15 @@ const state = reactive<FormData>({
     phone: '',
 });
 
+const formatDate = (date: any) => {
+    if (!date) return '';
+    return new Date(date.toString()).toLocaleDateString('ru-RU', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+    });
+};
+
 const confirm = () => {
     const dataToSend = {
         from: state.from,
@@ -50,14 +60,14 @@ const validateCurrentStep = () => {
         case 2:
             return state.passengersUnder12 + state.passengersOver12 > 0;
         case 3:
-            return state.name.trim() && state.phone.trim();
+            return state.name.trim() && isValidPhoneNumber(state.phone);
         default:
             return true;
     }
 };
 
 const nextStep = () => {
-    if (validateCurrentStep()) {
+    if (true) {
         showValidationErrors.value = false;
         if (currentStep.value < totalSteps.value) {
             currentStep.value++;
@@ -156,15 +166,6 @@ const buttonText = computed(() => {
                             *
                         </span>
                     </div>
-                    <!-- <UInput
-                        class="w-full"
-                        v-model="state.from"
-                        placeholder="Введите пункт отправления"
-                        size="xl"
-                        :ui="{
-                            base: 'rounded-2xl',
-                        }"
-                    /> -->
                     <LocationPicker
                         @open="isLocationModalOpen = true"
                         @close="isLocationModalOpen = false"
@@ -184,15 +185,6 @@ const buttonText = computed(() => {
                             *
                         </span>
                     </div>
-                    <!-- <UInput
-                        class="w-full"
-                        v-model="state.to"
-                        placeholder="Введите пункт назначения"
-                        size="xl"
-                        :ui="{
-                            base: 'rounded-2xl',
-                        }"
-                    /> -->
                     <LocationPicker
                         @open="isLocationModalOpen = true"
                         @close="isLocationModalOpen = false"
@@ -203,9 +195,10 @@ const buttonText = computed(() => {
 
             <div v-if="currentStep === 2" class="space-y-6 flex-1">
                 <div
-                    class="uppercase font-medium text-app-subtitle ml-2 flex items-center gap-1"
+                    class="uppercase font-medium text-app-subtitle flex items-center gap-1 border-b px-3 py-2 border-app-border-accented"
                 >
-                    Количество пассажиров
+                    <UIcon name="i-lucide-person-standing" class="size-5" />
+                    Кол-во пассажиров
                     <span
                         v-if="
                             showValidationErrors &&
@@ -216,12 +209,31 @@ const buttonText = computed(() => {
                         >*</span
                     >
                 </div>
+
+                <div>
+                    <div
+                        class="text-app-subtitle font-medium ml-2 mb-1 uppercase text-sm"
+                    >
+                        Старше 12 лет
+                    </div>
+                    <UInputNumber
+                        size="xl"
+                        class="w-full"
+                        type="number"
+                        :ui="{ base: ['rounded-2xl'] }"
+                        v-model="state.passengersOver12"
+                        :min="0"
+                    />
+                </div>
+
                 <div>
                     <div>
                         <div
-                            class="text-sm text-app-subtitle font-medium ml-2 mb-1"
+                            class="text-app-subtitle font-medium ml-2 mb-1 flex items-center gap-2"
                         >
-                            До 12 лет
+                            <span class="uppercase text-sm"
+                                >12 лет и младше</span
+                            >
                         </div>
                         <UInputNumber
                             size="xl"
@@ -232,21 +244,6 @@ const buttonText = computed(() => {
                             :min="0"
                         />
                     </div>
-                </div>
-                <div>
-                    <div
-                        class="text-sm text-app-subtitle font-medium ml-2 mb-1"
-                    >
-                        От 12 лет
-                    </div>
-                    <UInputNumber
-                        size="xl"
-                        class="w-full"
-                        type="number"
-                        :ui="{ base: ['rounded-2xl'] }"
-                        v-model="state.passengersOver12"
-                        :min="0"
-                    />
                 </div>
             </div>
 
@@ -265,7 +262,7 @@ const buttonText = computed(() => {
                     <UInput
                         class="w-full"
                         v-model="state.name"
-                        placeholder="Введите ваше имя"
+                        type=""
                         size="xl"
                         :ui="{
                             base: 'rounded-2xl',
@@ -279,7 +276,10 @@ const buttonText = computed(() => {
                     >
                         Телефон
                         <span
-                            v-if="showValidationErrors && !state.phone.trim()"
+                            v-if="
+                                showValidationErrors &&
+                                !isValidPhoneNumber(state.phone)
+                            "
                             class="text-red-500"
                             >*</span
                         >
@@ -287,9 +287,9 @@ const buttonText = computed(() => {
                     <UInput
                         class="w-full"
                         v-model="state.phone"
-                        placeholder="Введите номер телефона"
+                        placeholder="Нарпример: +44 123 456 7890"
                         size="xl"
-                        type="tel"
+                        type="text"
                         :ui="{
                             base: 'rounded-2xl',
                         }"
@@ -298,34 +298,101 @@ const buttonText = computed(() => {
             </div>
 
             <div v-if="currentStep === 4" class="space-y-6 flex-1">
-                <div class="p-3 rounded-2xl border border-app-border-accented">
-                    <div class="flex items-center gap-2 text-app-subtitle">
-                        <Icon
-                            name="heroicons:information-circle"
-                            class="w-5 h-5"
-                        />
-                        <span class="text-sm font-medium">
-                            Проверьте введенные данные перед отправкой!
-                        </span>
-                    </div>
+                <div
+                    class="uppercase font-medium text-app-subtitle flex items-center gap-1 border-b px-3 py-2 border-app-border-accented"
+                >
+                    <UIcon name="i-lucide-check-check" class="size-5" />
+                    Подтверждение данных
                 </div>
-                <div class="space-y-2">
-                    <div>
-                        <strong>Дата:</strong> {{ state.date?.toString() }}
+                <div class="space-y-4">
+                    <div
+                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
+                    >
+                        <div class="flex items-center gap-3">
+                            <UIcon
+                                name="i-lucide-calendar"
+                                class="w-5 h-5 text-app-subtitle shrink-0"
+                            />
+                            <p class="uppercase">
+                                {{ formatDate(state.date) }} в
+                                {{ state.time }}
+                            </p>
+                        </div>
                     </div>
-                    <div><strong>Время:</strong> {{ state.time }}</div>
-                    <div><strong>Откуда:</strong> {{ state.from }}</div>
-                    <div><strong>Куда:</strong> {{ state.to }}</div>
-                    <div>
-                        <strong>Пассажиров до 12 лет:</strong>
-                        {{ state.passengersUnder12 }}
+                    <div
+                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
+                    >
+                        <div class="flex flex-col gap-2 w-full">
+                            <div class="flex gap-2 items-center">
+                                <UIcon
+                                    name="i-lucide-map-pin"
+                                    class="w-5 h-5 text-app-subtitle shrink-0"
+                                />
+                                <p>
+                                    {{ state.from?.address }}
+                                </p>
+                            </div>
+                            <USeparator
+                                :ui="{
+                                    border: 'border-app-subtitle/20',
+                                }"
+                            />
+                            <div class="flex gap-2 items-center">
+                                <UIcon
+                                    name="i-lucide-map-pin"
+                                    class="w-5 h-5 text-app-subtitle shrink-0"
+                                />
+                                <p>
+                                    {{ state.to?.address }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    <div>
-                        <strong>Пассажиров от 12 лет:</strong>
-                        {{ state.passengersOver12 }}
+                    <div
+                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
+                    >
+                        <div class="flex items-center gap-2">
+                            <UIcon
+                                name="i-lucide-users"
+                                class="w-5 h-5 text-app-subtitle shrink-0"
+                            />
+                            <p class="uppercase">
+                                <strong>{{
+                                    state.passengersOver12 +
+                                    state.passengersUnder12
+                                }}</strong>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <UIcon
+                                name="i-lucide-corner-down-right"
+                                class="w-5 h-5 text-app-subtitle shrink-0 ml-1"
+                            />
+                            <p class="uppercase flex items-center gap-2">
+                                <UIcon
+                                    name="i-lucide-baby"
+                                    class="w-5 h-5 text-app-subtitle shrink-0"
+                                />
+                                <strong>{{ state.passengersUnder12 }}</strong>
+                            </p>
+                        </div>
                     </div>
-                    <div><strong>Имя:</strong> {{ state.name }}</div>
-                    <div><strong>Телефон:</strong> {{ state.phone }}</div>
+                    <div
+                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
+                    >
+                        <div class="flex items-center gap-3">
+                            <UIcon
+                                name="i-lucide-phone"
+                                class="w-5 h-5 text-app-subtitle shrink-0"
+                            />
+                            <div class="flex flex-col">
+                                <p class="uppercase">
+                                    {{ state.name }}
+                                </p>
+                                <p>{{ state.phone }}</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
