@@ -1,17 +1,17 @@
 import type { DateValue } from '@internationalized/date';
 
-export interface LocationData {
-    address: string;
-    coordinates: [number, number];
-}
+// export interface LocationData {
+//     address: string;
+//     coordinates: [number, number];
+// }
 
-export interface FormData {
+export interface OrderData {
     date: DateValue | null;
     time: string | null;
-    passengersUnder12: number;
-    passengersOver12: number;
-    from: LocationData | null;
-    to: LocationData | null;
+    children: number;
+    adults: number;
+    from_location: string | null;
+    to_location: string | null;
     name: string;
     phone: string;
 }

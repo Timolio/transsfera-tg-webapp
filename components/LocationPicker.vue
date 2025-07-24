@@ -63,13 +63,8 @@
 </template>
 
 <script setup lang="ts">
-import type { LocationData } from '~/types/types';
-
 interface Props {
-    modelValue?: {
-        address: string;
-        coordinates: [number, number];
-    } | null;
+    modelValue?: string | null;
     placeholder?: string;
 }
 
@@ -85,8 +80,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-    'update:modelValue': [value: LocationData | null];
-    change: [value: LocationData | null];
+    'update:modelValue': [value: string | null];
+    change: [value: string | null];
     open: [];
     close: [];
 }>();
@@ -94,10 +89,10 @@ const emit = defineEmits<{
 const isMapOpen = ref(false);
 const searchQuery = ref('');
 const searchResults = ref<SearchResult[]>([]);
-const selectedAddress = ref(props.modelValue?.address || '');
-const selectedCoordinates = ref<[number, number] | null>(
-    props.modelValue?.coordinates || null
-);
+const selectedAddress = ref(props.modelValue || '');
+// const selectedCoordinates = ref<[number, number] | null>(
+//     props.modelValue?.coordinates || null
+// );
 
 const searchInput = ref();
 
@@ -130,10 +125,10 @@ const handleSearch = async () => {
 };
 
 const selectSearchResult = (result: SearchResult) => {
-    const lat = parseFloat(result.lat);
-    const lng = parseFloat(result.lon);
+    // const lat = parseFloat(result.lat);
+    // const lng = parseFloat(result.lon);
 
-    selectedCoordinates.value = [lat, lng];
+    // selectedCoordinates.value = [lat, lng];
     selectedAddress.value = result.display_name;
     searchResults.value = [];
     searchQuery.value = '';
@@ -143,14 +138,14 @@ const selectSearchResult = (result: SearchResult) => {
 };
 
 const updateModelValue = () => {
-    if (selectedCoordinates.value && selectedAddress.value) {
-        const locationData: LocationData = {
-            address: selectedAddress.value,
-            coordinates: selectedCoordinates.value,
-        };
+    if (selectedAddress.value) {
+        // const locationData: LocationData = {
+        //     address: selectedAddress.value,
+        //     coordinates: selectedCoordinates.value,
+        // };
 
-        emit('update:modelValue', locationData);
-        emit('change', locationData);
+        emit('update:modelValue', selectedAddress.value);
+        emit('change', selectedAddress.value);
     }
 };
 
@@ -181,8 +176,8 @@ watch(
     () => props.modelValue,
     newValue => {
         if (newValue) {
-            selectedAddress.value = newValue.address;
-            selectedCoordinates.value = newValue.coordinates;
+            selectedAddress.value = newValue;
+            // selectedCoordinates.value = newValue.coordinates;
         }
     },
     { deep: true }

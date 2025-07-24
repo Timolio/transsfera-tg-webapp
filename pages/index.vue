@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { FormData } from '~/types/types';
+import type { OrderData } from '~/types/types';
 import { today, getLocalTimeZone } from '@internationalized/date';
 import { isValidPhoneNumber } from 'libphonenumber-js';
 
@@ -16,13 +16,13 @@ const isTimeModalOpen = ref(false);
 const isLocationModalOpen = ref(false);
 const showValidationErrors = ref(false);
 
-const state = reactive<FormData>({
+const state = reactive<OrderData>({
     date: null,
     time: null,
-    passengersUnder12: 0,
-    passengersOver12: 0,
-    from: null,
-    to: null,
+    children: 0,
+    adults: 0,
+    from_location: null,
+    to_location: null,
     name: '',
     phone: '',
 });
@@ -38,12 +38,12 @@ const formatDate = (date: any) => {
 
 const confirm = () => {
     const dataToSend = {
-        from: state.from,
-        to: state.to,
+        from_location: state.from_location,
+        to_location: state.to_location,
         date: state.date?.toString(),
         time: state.time,
-        passengersUnder12: state.passengersUnder12,
-        passengersOver12: state.passengersOver12,
+        children: state.children,
+        adults: state.adults,
         name: state.name,
         phone: state.phone,
     };
@@ -56,9 +56,9 @@ const validateCurrentStep = () => {
         case 0:
             return state.date && state.time;
         case 1:
-            return state.to !== null && state.from !== null;
+            return state.to_location !== null && state.from_location !== null;
         case 2:
-            return state.passengersUnder12 + state.passengersOver12 > 0;
+            return state.children + state.adults > 0;
         case 3:
             return state.name.trim() && isValidPhoneNumber(state.phone);
         default:
@@ -160,7 +160,10 @@ const buttonText = computed(() => {
                     >
                         Откуда
                         <span
-                            v-if="showValidationErrors && state.from === null"
+                            v-if="
+                                showValidationErrors &&
+                                state.from_location === null
+                            "
                             class="text-red-500"
                         >
                             *
@@ -169,7 +172,7 @@ const buttonText = computed(() => {
                     <LocationPicker
                         @open="isLocationModalOpen = true"
                         @close="isLocationModalOpen = false"
-                        v-model="state.from"
+                        v-model="state.from_location"
                     />
                 </div>
 
@@ -179,7 +182,10 @@ const buttonText = computed(() => {
                     >
                         Куда
                         <span
-                            v-if="showValidationErrors && state.to === null"
+                            v-if="
+                                showValidationErrors &&
+                                state.to_location === null
+                            "
                             class="text-red-500"
                         >
                             *
@@ -188,7 +194,7 @@ const buttonText = computed(() => {
                     <LocationPicker
                         @open="isLocationModalOpen = true"
                         @close="isLocationModalOpen = false"
-                        v-model="state.to"
+                        v-model="state.to_location"
                     />
                 </div>
             </div>
@@ -202,8 +208,7 @@ const buttonText = computed(() => {
                     <span
                         v-if="
                             showValidationErrors &&
-                            state.passengersUnder12 + state.passengersOver12 ===
-                                0
+                            state.children + state.adults === 0
                         "
                         class="text-red-500"
                         >*</span
@@ -221,7 +226,7 @@ const buttonText = computed(() => {
                         class="w-full"
                         type="number"
                         :ui="{ base: ['rounded-2xl'] }"
-                        v-model="state.passengersOver12"
+                        v-model="state.adults"
                         :min="0"
                     />
                 </div>
@@ -240,7 +245,7 @@ const buttonText = computed(() => {
                             class="w-full"
                             type="number"
                             :ui="{ base: ['rounded-2xl'] }"
-                            v-model="state.passengersUnder12"
+                            v-model="state.children"
                             :min="0"
                         />
                     </div>
@@ -320,30 +325,32 @@ const buttonText = computed(() => {
                         </div>
                     </div>
                     <div
-                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
+                        class="bg-app-bg-accented px-3 py-3 rounded-2xl border border-app-border-accented"
                     >
-                        <div class="flex flex-col gap-2 w-full">
-                            <div class="flex gap-2 items-center">
+                        <div class="flex gap-2">
+                            <div class="flex flex-col items-center">
+                                <div
+                                    class="w-2 h-2 rounded-full bg-app-subtitle mt-1"
+                                ></div>
+
+                                <div
+                                    class="flex-1 border-1 border-dashed border-app-subtitle/30 my-1"
+                                ></div>
+
                                 <UIcon
                                     name="i-lucide-map-pin"
-                                    class="w-5 h-5 text-app-subtitle shrink-0"
+                                    class="w-5 h-5 text-app-subtitle"
                                 />
-                                <p>
-                                    {{ state.from?.address }}
-                                </p>
                             </div>
-                            <USeparator
-                                :ui="{
-                                    border: 'border-app-subtitle/20',
-                                }"
-                            />
-                            <div class="flex gap-2 items-center">
-                                <UIcon
-                                    name="i-lucide-map-pin"
-                                    class="w-5 h-5 text-app-subtitle shrink-0"
-                                />
+
+                            <!-- Правая колонка: текст -->
+                            <div class="flex flex-col gap-3 justify-between">
                                 <p>
-                                    {{ state.to?.address }}
+                                    {{ state.from_location }}
+                                </p>
+                                <USeparator />
+                                <p>
+                                    {{ state.to_location }}
                                 </p>
                             </div>
                         </div>
@@ -358,8 +365,7 @@ const buttonText = computed(() => {
                             />
                             <p class="uppercase">
                                 <strong>{{
-                                    state.passengersOver12 +
-                                    state.passengersUnder12
+                                    state.adults + state.children
                                 }}</strong>
                             </p>
                         </div>
@@ -373,7 +379,7 @@ const buttonText = computed(() => {
                                     name="i-lucide-baby"
                                     class="w-5 h-5 text-app-subtitle shrink-0"
                                 />
-                                <strong>{{ state.passengersUnder12 }}</strong>
+                                <strong>{{ state.children }}</strong>
                             </p>
                         </div>
                     </div>
