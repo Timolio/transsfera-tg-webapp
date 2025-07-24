@@ -84,6 +84,8 @@ const prevStep = () => {
     if (currentStep.value > 0) {
         currentStep.value--;
         showValidationErrors.value = false;
+        isTimeModalOpen.value = false;
+        isLocationModalOpen.value = false;
     }
 };
 
