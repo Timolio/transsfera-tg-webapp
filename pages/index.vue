@@ -48,8 +48,12 @@ const confirm = () => {
         time: state.time,
         children: state.children,
         adults: state.adults,
+        baggage: state.baggage,
         name: state.name,
         phone: state.phone,
+        hasTelegram: state.hasTelegram,
+        hasWhatsApp: state.hasWhatsApp,
+        hasViber: state.hasViber,
     };
 
     sendData(JSON.stringify(dataToSend));
