@@ -39,9 +39,21 @@
                 />
 
                 <div
-                    v-if="searchResults.length > 0"
-                    class="mt-2 bg-app-bg-accented rounded-2xl border border-app-border-accented max-h-80 overflow-y-auto"
+                    class="mt-2 bg-app-bg-accented rounded-2xl border border-app-border-accented max-h-100 overflow-y-auto"
                 >
+                    <div
+                        class="px-3 py-2 cursor-pointer flex items-center gap-2 border-b border-app-border-accented last:border-none"
+                        v-if="searchQuery.trim()"
+                        @click="confirmCustomAddress"
+                    >
+                        <UIcon
+                            name="i-lucide-keyboard"
+                            class="size-5 shrink-0 text-app-subtitle"
+                        />
+                        <div>
+                            <span class="font-medium">{{ searchQuery }}</span>
+                        </div>
+                    </div>
                     <div
                         v-for="result in searchResults"
                         :key="result.place_id"
@@ -130,6 +142,15 @@ const selectSearchResult = (result: SearchResult) => {
 
     // selectedCoordinates.value = [lat, lng];
     selectedAddress.value = result.display_name;
+    searchResults.value = [];
+    searchQuery.value = '';
+
+    updateModelValue();
+    closeMap();
+};
+
+const confirmCustomAddress = () => {
+    selectedAddress.value = searchQuery.value.trim();
     searchResults.value = [];
     searchQuery.value = '';
 

@@ -31,7 +31,7 @@
 
         <div
             v-if="isModalOpen"
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 bg-opacity backdrop-blur-md p-5"
+            class="fixed inset-0 z-50 flex flex-col gap-2 items-center justify-center bg-black/30 bg-opacity backdrop-blur-md p-5"
             @click="closeModal"
         >
             <div
@@ -85,11 +85,20 @@
                     </div>
                 </div>
             </div>
+            <div class="absolute p-5 top-0 w-full flex justify-end">
+                <UButton
+                    size="xl"
+                    icon="i-lucide-check"
+                    class="rounded-xl cursor-pointer"
+                ></UButton>
+            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
+import { UButton } from '#components';
+
 interface Props {
     modelValue?: string;
 }
