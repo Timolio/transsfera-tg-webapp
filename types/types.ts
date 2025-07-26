@@ -10,8 +10,12 @@ export interface OrderData {
     time: string | null;
     children: number;
     adults: number;
+    baggage: number;
     from_location: string | null;
     to_location: string | null;
     name: string;
     phone: string;
+    hasTelegram: boolean;
+    hasWhatsApp: boolean;
+    hasViber: boolean;
 }
