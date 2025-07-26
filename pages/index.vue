@@ -73,7 +73,7 @@ const validateCurrentStep = () => {
 };
 
 const nextStep = () => {
-    if (true) {
+    if (validateCurrentStep()) {
         showValidationErrors.value = false;
         if (currentStep.value < totalSteps.value) {
             currentStep.value++;
@@ -373,7 +373,7 @@ const buttonText = computed(() => {
                                     class="size-6 text-white"
                                 />
                             </div>
-                            <span class="text-sm">WhatsApp</span>
+                            <!-- <span class="text-sm">WhatsApp</span> -->
                         </label>
 
                         <label
@@ -401,7 +401,7 @@ const buttonText = computed(() => {
                                     class="size-9 text-blue-500"
                                 />
                             </div>
-                            <span class="text-sm">Telegram</span>
+                            <!-- <span class="text-sm">Telegram</span> -->
                         </label>
 
                         <label
@@ -426,7 +426,7 @@ const buttonText = computed(() => {
                                     class="size-6 text-white"
                                 />
                             </div>
-                            <span class="text-sm">Viber</span>
+                            <!-- <span class="text-sm">Viber</span> -->
                         </label>
                     </div>
                 </div>
@@ -577,9 +577,9 @@ const buttonText = computed(() => {
                 </div>
             </div>
 
-            <button @click="nextStep" v-if="shouldShowMainButton">
+            <!-- <button @click="nextStep" v-if="shouldShowMainButton">
                 {{ buttonText }}
-            </button>
+            </button> -->
         </div>
     </div>
 
