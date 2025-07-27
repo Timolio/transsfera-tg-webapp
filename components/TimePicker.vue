@@ -85,20 +85,11 @@
                     </div>
                 </div>
             </div>
-            <div class="absolute p-5 top-0 w-full flex justify-end">
-                <UButton
-                    size="xl"
-                    icon="i-lucide-check"
-                    class="rounded-xl cursor-pointer"
-                ></UButton>
-            </div>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { UButton } from '#components';
-
 interface Props {
     modelValue?: string;
 }

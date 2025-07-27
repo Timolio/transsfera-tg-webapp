@@ -77,6 +77,11 @@ const validateCurrentStep = () => {
 };
 
 const nextStep = () => {
+    if (isTimeModalOpen.value) {
+        isTimeModalOpen.value = false;
+        return;
+    }
+
     if (validateCurrentStep()) {
         showValidationErrors.value = false;
         if (currentStep.value < totalSteps.value) {
@@ -102,10 +107,14 @@ const prevStep = () => {
 const minDate = today(getLocalTimeZone());
 
 const shouldShowMainButton = computed(() => {
-    return !isTimeModalOpen.value && !isLocationModalOpen.value;
+    return !isLocationModalOpen.value;
 });
 
 const buttonText = computed(() => {
+    if (isTimeModalOpen.value) {
+        return 'Сохранить';
+    }
+
     return currentStep.value === totalSteps.value ? 'Готово' : 'Далее';
 });
 </script>
