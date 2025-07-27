@@ -604,6 +604,8 @@ const buttonText = computed(() => {
         :visible="shouldShowMainButton"
         @click="nextStep"
         color="#e7c380"
+        text-color="#171717"
+        
     />
     <BackButton :visible="currentStep > 0" @click="prevStep" />
 </template>
