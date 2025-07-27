@@ -580,8 +580,8 @@ const buttonText = computed(() => {
                     </div>
                 </div>
             </div>
-
-            <!-- <button @click="nextStep" v-if="shouldShowMainButton">
+            <!-- 
+            <button @click="nextStep" v-if="shouldShowMainButton">
                 {{ buttonText }}
             </button> -->
         </div>
