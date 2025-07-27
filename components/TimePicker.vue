@@ -187,6 +187,10 @@ watch(
     }
 );
 
+defineExpose({
+    closeModal,
+});
+
 onMounted(() => {
     if (!selectedTime.value) {
         const now = new Date();

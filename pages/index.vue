@@ -16,6 +16,8 @@ const isTimeModalOpen = ref(false);
 const isLocationModalOpen = ref(false);
 const showValidationErrors = ref(false);
 
+const timePickerRef = ref<any>(null);
+
 const state = reactive<OrderData>({
     date: null,
     time: null,
@@ -78,7 +80,7 @@ const validateCurrentStep = () => {
 
 const nextStep = () => {
     if (isTimeModalOpen.value) {
-        isTimeModalOpen.value = false;
+        timePickerRef.value?.closeModal();
         return;
     }
 
@@ -168,6 +170,7 @@ const buttonText = computed(() => {
                         </span>
                     </div>
                     <TimePicker
+                        ref="timePickerRef"
                         @open="isTimeModalOpen = true"
                         @close="isTimeModalOpen = false"
                         v-model="state.time!"
