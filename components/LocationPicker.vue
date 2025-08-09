@@ -47,7 +47,7 @@
                         @click="confirmCustomAddress"
                     >
                         <UIcon
-                            name="i-lucide-keyboard"
+                            name="i-lucide-map-pin"
                             class="size-5 shrink-0 text-app-subtitle"
                         />
                         <div>
