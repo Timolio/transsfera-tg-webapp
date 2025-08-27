@@ -10,7 +10,7 @@ const { sendData } = useWebApp();
 const { notificationOccurred } = useWebAppHapticFeedback();
 
 const currentStep = ref(0);
-const totalSteps = ref(5);
+const totalSteps = ref(6);
 
 const isTimeModalOpen = ref(false);
 const isLocationModalOpen = ref(false);
@@ -31,6 +31,7 @@ const state = reactive<OrderData>({
     hasTelegram: false,
     hasWhatsApp: false,
     hasViber: false,
+    comment: '',
 });
 
 const formatDate = (date: any) => {
@@ -56,6 +57,7 @@ const confirm = () => {
         hasTelegram: state.hasTelegram,
         hasWhatsApp: state.hasWhatsApp,
         hasViber: state.hasViber,
+        comment: state.comment,
     };
 
     sendData(JSON.stringify(dataToSend));
@@ -73,6 +75,8 @@ const validateCurrentStep = () => {
             return true;
         case 4:
             return state.name.trim() && isValidPhoneNumber(state.phone);
+        case 5:
+            return true;
         default:
             return true;
     }
@@ -448,8 +452,25 @@ const buttonText = computed(() => {
                 </div>
             </div>
 
-            <!-- Overview -->
             <div v-if="currentStep === 5" class="space-y-6 flex-1">
+                <div
+                    class="uppercase font-medium text-app-subtitle flex items-center gap-1 border-b px-3 py-2 border-app-border-accented"
+                >
+                    <UIcon name="i-lucide-message-circle" class="size-5" />
+                    Комментарий
+                </div>
+
+                <UTextarea
+                    v-model="state.comment"
+                    placeholder="Ваш комментарий (необязательно)"
+                    size="xl"
+                    :ui="{ base: 'rounded-2xl' }"
+                    class="w-full"
+                />
+            </div>
+
+            <!-- Overview -->
+            <div v-if="currentStep === 6" class="space-y-6 flex-1">
                 <div
                     class="uppercase font-medium text-app-subtitle flex items-center gap-1 border-b px-3 py-2 border-app-border-accented"
                 >
@@ -590,10 +611,22 @@ const buttonText = computed(() => {
                             </div>
                         </div>
                     </div>
+                    <div
+                        v-if="state.comment"
+                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
+                    >
+                        <div class="flex items-center gap-2">
+                            <UIcon
+                                name="i-lucide-message-square"
+                                class="w-5 h-5 text-app-subtitle shrink-0"
+                            />
+                            <p>{{ state.comment }}</p>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <!-- 
-            <button @click="nextStep" v-if="shouldShowMainButton">
+
+            <!-- <button @click="nextStep" v-if="shouldShowMainButton">
                 {{ buttonText }}
             </button> -->
         </div>
@@ -605,7 +638,6 @@ const buttonText = computed(() => {
         @click="nextStep"
         color="#e7c380"
         text-color="#171717"
-        
     />
     <BackButton :visible="currentStep > 0" @click="prevStep" />
 </template>

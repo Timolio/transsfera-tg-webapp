@@ -39,12 +39,13 @@
                 />
 
                 <div
+                    v-if="searchResults.length || searchQuery.trim()"
                     class="mt-2 bg-app-bg-accented rounded-2xl border border-app-border-accented max-h-100 overflow-y-auto"
                 >
                     <div
                         class="px-3 py-2 cursor-pointer flex items-center gap-2 border-b border-app-border-accented last:border-none"
-                        v-if="searchQuery.trim()"
                         @click="confirmCustomAddress"
+                        v-if="searchQuery.trim()"
                     >
                         <UIcon
                             name="i-lucide-map-pin"

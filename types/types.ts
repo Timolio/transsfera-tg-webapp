@@ -18,4 +18,5 @@ export interface OrderData {
     hasTelegram: boolean;
     hasWhatsApp: boolean;
     hasViber: boolean;
+    comment: string;
 }
