@@ -1,4 +1,4 @@
-export default function (color, amount) {
+export default function (color: string, amount: number) {
     return (
         '#' +
         color

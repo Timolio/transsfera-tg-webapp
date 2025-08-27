@@ -478,150 +478,224 @@ const buttonText = computed(() => {
                     Подтверждение данных
                 </div>
                 <div class="space-y-4">
+                    <!-- Время и дата -->
                     <div
-                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
+                        class="bg-app-bg-accented p-5 rounded-2xl border border-app-border-accented"
                     >
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center mb-2">
                             <UIcon
-                                name="i-lucide-calendar"
-                                class="w-5 h-5 text-app-subtitle shrink-0"
+                                name="i-lucide-calendar-days"
+                                class="w-5 h-5 mr-2 text-app-subtitle"
                             />
-                            <p class="uppercase">
-                                {{ formatDate(state.date) }} в
+                            <span
+                                class="font-medium uppercase text-sm text-app-subtitle"
+                                >Поездка</span
+                            >
+                        </div>
+                        <div class="text-left">
+                            <p class="text-2xl font-bold mb-1">
+                                {{ formatDateBeautiful(state.date) }}
+                            </p>
+                            <p class="text-xl">
                                 {{ state.time }}
                             </p>
                         </div>
                     </div>
+
+                    <!-- Маршрут -->
                     <div
-                        class="bg-app-bg-accented px-3 py-3 rounded-2xl border border-app-border-accented"
+                        class="bg-app-bg-accented p-5 rounded-2xl border border-app-border-accented"
                     >
-                        <div class="flex gap-2">
+                        <div class="flex items-center mb-4">
+                            <UIcon
+                                name="i-lucide-route"
+                                class="w-5 h-5 text-app-subtitle mr-2"
+                            />
+                            <span
+                                class="uppercase font-medium text-app-subtitle text-sm"
+                                >Маршрут</span
+                            >
+                        </div>
+                        <div class="flex gap-4">
                             <div class="flex flex-col items-center">
                                 <div
-                                    class="w-2 h-2 rounded-full bg-app-subtitle mt-1"
+                                    class="w-3 h-3 rounded-full bg-green-500 mt-1"
                                 ></div>
 
                                 <div
-                                    class="flex-1 border-1 border-dashed border-app-subtitle/30 my-1"
+                                    class="flex-1 w-0.5 h-8 bg-gradient-to-b from-green-500 to-red-500 my-1"
                                 ></div>
 
                                 <UIcon
                                     name="i-lucide-map-pin"
-                                    class="w-5 h-5 text-app-subtitle"
+                                    class="w-5 h-5 text-red-500"
                                 />
                             </div>
 
-                            <div class="flex flex-col gap-3 justify-between">
-                                <p>
+                            <div
+                                class="flex flex-col gap-3 justify-between w-full"
+                            >
+                                <p class="text-lg font-semibold">
                                     {{ state.from_location }}
                                 </p>
                                 <USeparator />
-                                <p>
+                                <p class="text-lg font-semibold">
                                     {{ state.to_location }}
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div
-                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
-                    >
-                        <div class="flex items-center gap-2">
-                            <UIcon
-                                name="i-lucide-users"
-                                class="w-5 h-5 text-app-subtitle shrink-0"
-                            />
-                            <p class="uppercase">
-                                <strong>{{
-                                    state.adults + state.children
-                                }}</strong>
-                            </p>
-                        </div>
-                        <div class="flex items-center gap-4">
-                            <UIcon
-                                name="i-lucide-corner-down-right"
-                                class="w-5 h-5 text-app-subtitle shrink-0 ml-1"
-                            />
-                            <p class="uppercase flex items-center gap-2">
+
+                    <!-- Пассажиры и багаж -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div
+                            class="bg-app-bg-accented p-5 rounded-2xl border border-app-border-accented"
+                        >
+                            <div class="flex items-center mb-4">
                                 <UIcon
-                                    name="i-lucide-baby"
-                                    class="w-5 h-5 text-app-subtitle shrink-0"
+                                    name="i-lucide-users"
+                                    class="w-5 h-5 text-app-subtitle mr-2"
                                 />
-                                <strong>{{ state.children }}</strong>
-                            </p>
-                        </div>
-                    </div>
-                    <div
-                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
-                    >
-                        <div class="flex items-center gap-2">
-                            <UIcon
-                                name="i-lucide-luggage"
-                                class="w-5 h-5 text-app-subtitle shrink-0"
-                            />
-                            <p class="uppercase">
-                                <strong>{{ state.baggage }}</strong>
-                            </p>
-                        </div>
-                    </div>
-                    <div
-                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
-                    >
-                        <div class="flex items-center gap-3">
-                            <UIcon
-                                name="i-lucide-phone"
-                                class="w-5 h-5 text-app-subtitle shrink-0"
-                            />
-                            <div class="flex flex-col">
-                                <p class="uppercase">
-                                    {{ state.name }}
+                                <span
+                                    class="uppercase font-medium text-app-subtitle text-sm"
+                                    >Пассажиры</span
+                                >
+                            </div>
+                            <div class="flex justify-center items-center gap-4">
+                                <p class="text-3xl font-bold text-blue-600">
+                                    {{ state.adults + state.children }}
                                 </p>
-                                <div class="flex gap-2 items-center">
-                                    {{ state.phone }}
+                                <div
+                                    class="text-sm text-app-subtitle space-y-1"
+                                >
                                     <div
-                                        v-if="state.hasWhatsApp"
-                                        class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center"
+                                        v-if="state.adults > 0"
+                                        class="flex items-center justify-center gap-1"
                                     >
                                         <UIcon
-                                            name="i-simple-icons-whatsapp"
-                                            class="size-3 text-white"
+                                            name="i-lucide-user"
+                                            class="w-4 h-4"
                                         />
+                                        <span>{{ state.adults }}</span>
                                     </div>
                                     <div
-                                        v-if="state.hasTelegram"
-                                        class="flex items-center justify-center relative"
-                                    >
-                                        <div
-                                            class="absolute rounded-full h-3 w-3 bg-white"
-                                        ></div>
-                                        <UIcon
-                                            name="i-simple-icons-telegram"
-                                            class="size-5 text-blue-500"
-                                        />
-                                    </div>
-                                    <div
-                                        v-if="state.hasViber"
-                                        class="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center"
+                                        v-if="state.children > 0"
+                                        class="flex items-center justify-center gap-1"
                                     >
                                         <UIcon
-                                            name="i-simple-icons-viber"
-                                            class="size-3 text-white"
+                                            name="i-lucide-baby"
+                                            class="w-4 h-4"
                                         />
+                                        <span>{{ state.children }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <div
+                            class="bg-app-bg-accented p-5 rounded-2xl border border-app-border-accented"
+                        >
+                            <div class="flex items-center mb-4">
+                                <UIcon
+                                    name="i-lucide-luggage"
+                                    class="w-5 h-5 text-app-subtitle mr-2"
+                                />
+                                <span
+                                    class="uppercase font-medium text-app-subtitle text-sm"
+                                    >Багаж</span
+                                >
+                            </div>
+                            <div class="text-center">
+                                <p class="text-3xl font-bold text-orange-600">
+                                    {{ state.baggage }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Контактные данные -->
+                    <div
+                        class="bg-app-bg-accented p-5 rounded-2xl border border-app-border-accented"
+                    >
+                        <div class="flex items-center mb-4">
+                            <UIcon
+                                name="i-lucide-contact"
+                                class="w-5 h-5 text-app-subtitle mr-2"
+                            />
+                            <span
+                                class="uppercase font-medium text-app-subtitle text-sm"
+                                >Контакты</span
+                            >
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <div
+                                    class="font-semibold text-lg flex items-center gap-2"
+                                >
+                                    {{ state.name }}
+                                    <div
+                                        v-if="
+                                            state.hasWhatsApp ||
+                                            state.hasTelegram ||
+                                            state.hasViber
+                                        "
+                                        class="flex gap-2"
+                                    >
+                                        <div
+                                            v-if="state.hasWhatsApp"
+                                            class="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center"
+                                        >
+                                            <UIcon
+                                                name="i-simple-icons-whatsapp"
+                                                class="size-3 text-white"
+                                            />
+                                        </div>
+                                        <div
+                                            v-if="state.hasTelegram"
+                                            class="flex items-center justify-center relative"
+                                        >
+                                            <div
+                                                class="absolute rounded-full h-3 w-3 bg-white"
+                                            ></div>
+                                            <UIcon
+                                                name="i-simple-icons-telegram"
+                                                class="size-5 text-blue-500"
+                                            />
+                                        </div>
+                                        <div
+                                            v-if="state.hasViber"
+                                            class="w-5 h-5 rounded-full bg-purple-500 flex items-center justify-center"
+                                        >
+                                            <UIcon
+                                                name="i-simple-icons-viber"
+                                                class="size-3 text-white"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                                <p class="text-app-subtitle">
+                                    {{ state.phone }}
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Комментарий -->
                     <div
                         v-if="state.comment"
-                        class="bg-app-bg-accented px-3 py-2 rounded-2xl border border-app-border-accented"
+                        class="bg-app-bg-accented p-5 rounded-2xl border border-app-border-accented"
                     >
-                        <div class="flex items-center gap-2">
+                        <div class="flex items-center mb-3">
                             <UIcon
-                                name="i-lucide-message-square"
-                                class="w-5 h-5 text-app-subtitle shrink-0"
+                                name="i-lucide-message-circle"
+                                class="w-5 h-5 text-app-subtitle mr-2"
                             />
-                            <p>{{ state.comment }}</p>
+                            <span
+                                class="uppercase font-medium text-sm text-app-subtitle"
+                                >Комментарий</span
+                            >
                         </div>
+                        <p class="italic">{{ state.comment }}</p>
                     </div>
                 </div>
             </div>
